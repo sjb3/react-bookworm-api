@@ -1,4 +1,3 @@
-'use strict';
 
 import express from 'express';
 import path from 'path';
@@ -9,6 +8,7 @@ import auth from './routes/auth';
 const app = express();
 
 // connect to database
+// prev mongoose.connect('url') deprecated use below,
 mongoose.connect('mongodb://localhost/bookworm', { useMongoClient: true });
 
 app.use('api/auth', auth);
