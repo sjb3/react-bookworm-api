@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import uniqueValidator from 'mongoose-unique-validator';
 
-// TODO: add uniqueness and email verigication to E mail
+// TODO: add uniqueness and email verification to E mail
 
 const schema = new mongoose.Schema({
   email: {
@@ -14,8 +14,10 @@ const schema = new mongoose.Schema({
     index: true,
     unique: true },
   passwordHash: { type: String, required: true},
-  confirmed: {type: Boolean, default: false }
-  }, { timestamp: true }
+  confirmed: {type: Boolean, default: false },
+  confirmationToken: {type: String, default: ''}
+  },
+  { timestamp: true }
 );
 
 schema.methods.isValidPassword = function isValidPassword(password) {
@@ -24,6 +26,14 @@ schema.methods.isValidPassword = function isValidPassword(password) {
 
 schema.methods.setPassword = function setPassword(password) {
   this.passwordHash = bcrypt.hashSync(password, 10);
+};
+
+schema.methods.setConfirmationToken = function setConfirmationToken() {
+  this.confirmationToken = this.generateJWT();
+};
+
+schema.methods.generateConfirmationUrl = function generateConfirmationUrl() {
+  return `${process.env.HOST}/confirmation/${this.confirmationToken}`;
 };
 
 schema.methods.generateJWT = function generateJWT() {
